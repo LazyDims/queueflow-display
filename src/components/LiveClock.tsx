@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 const DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -21,10 +23,10 @@ export function LiveClock({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-col items-end ${className}`}>
       <div className="font-display tabular-nums text-3xl md:text-5xl font-bold tracking-tight text-gold-gradient">
-        {hh}
+        {hh} :
         <span className="animate-blink-soft">:</span>
         {mm}
-        <span className="text-foreground/60 text-2xl md:text-3xl">:{ss}</span>
+        <span className="text-foreground/60 text-2xl md:text-3xl"> : {ss}</span>
       </div>
       <div className="text-xs md:text-base text-muted-foreground tracking-wide uppercase">
         {dateStr}

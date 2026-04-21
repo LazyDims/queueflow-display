@@ -98,6 +98,24 @@ export async function skip(counterId: string) {
 export async function resetDaily() {
   const { error } = await supabase.rpc("reset_daily_queue");
   if (error) throw error;
+  // Kirim broadcast reset ke semua halaman yang subscribe
+  // Gunakan channel sementara — Supabase Broadcast tidak butuh subscribe untuk send
+  const ch = supabase.channel("queue-system-events", {
+    config: { broadcast: { self: true } },
+  });
+  await new Promise<void>((resolve) => {
+    ch.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        ch.send({
+          type: "broadcast",
+          event: "queue_reset",
+          payload: { at: new Date().toISOString() },
+        }).then(() => resolve());
+      }
+    });
+  });
+  // Biarkan channel tetap aktif sebentar agar pesan terkirim, lalu cleanup
+  setTimeout(() => supabase.removeChannel(ch), 2000);
 }
 
 /** Speak ticket call via Web Speech API (id-ID) */
@@ -107,10 +125,10 @@ export function speakCall(ticketNumber: string, counterNumber: number) {
   // split number to letters+digits for clearer pronunciation
   const letters = ticketNumber.replace(/\d/g, "");
   const digits = ticketNumber.replace(/\D/g, "").split("").join(" ");
-  const text = `Nomor antrian ${letters} ${digits}, silakan menuju loket ${counterNumber}`;
+  const text = `Nomor antrian ${letters}, ${digits}, silakan menuju loket ${counterNumber}`;
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "id-ID";
-  utter.rate = 0.95;
+  utter.rate = 0.85;
   utter.pitch = 1;
   // try pick Indonesian voice
   const voices = synth.getVoices();

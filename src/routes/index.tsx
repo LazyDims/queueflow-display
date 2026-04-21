@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { LiveClock } from "@/components/LiveClock";
+import AppMark from "@/components/AppMark";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -11,9 +12,7 @@ function Landing() {
     <div className="min-h-screen bg-hero">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-gold to-gold-glow text-navy-deep font-black text-lg shadow-glow">
-            AD
-          </div>
+          <AppMark className="h-12 w-12 md:h-11 md:w-11 text-lg" />
           <div>
             <div className="font-display text-lg font-bold">Antrean Digital</div>
             <div className="text-xs text-muted-foreground -mt-0.5">

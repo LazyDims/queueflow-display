@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import AppMark from "@/components/AppMark";
 import { useState } from "react";
 import { useRealtimeQueue } from "@/hooks/useRealtimeQueue";
 import { issueTicket, type Ticket } from "@/lib/queue";
@@ -38,9 +39,7 @@ function KioskPage() {
     <div className="min-h-screen bg-hero">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
         <Link to="/" className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-gold to-gold-glow text-navy-deep font-black shadow-glow">
-            AD
-          </div>
+          <AppMark className="h-11 w-11 text-lg" />
           <div>
             <div className="font-display text-lg font-bold">Ambil Nomor</div>
             <div className="text-xs text-muted-foreground -mt-0.5">
@@ -51,11 +50,11 @@ function KioskPage() {
         <LiveClock />
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 pb-16">
+      <main className="mx-auto max-w-5xl flex flex-col justify-center min-h-[calc(100vh-80px)]">
         {issued ? (
           <TicketReceipt ticket={issued} onClose={() => setIssued(null)} />
         ) : (
-          <section className="grid gap-5 md:grid-cols-3 mt-8">
+          <section className="grid gap-5 md:grid-cols-3 p-8">
             {categories.map((c) => (
               <button
                 key={c.id}
@@ -92,7 +91,7 @@ function TicketReceipt({ ticket, onClose }: { ticket: Ticket; onClose: () => voi
       </div>
       <div
         className="mt-3 font-display font-black text-gold-gradient tabular-nums leading-none animate-ticker-pop"
-        style={{ fontSize: "clamp(7rem, 18vw, 14rem)" }}
+        style={{ fontSize: "clamp(3.5rem, 10vw, 7rem)" }}
       >
         {ticket.ticket_number}
       </div>

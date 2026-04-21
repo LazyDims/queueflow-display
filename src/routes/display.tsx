@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LiveClock } from "@/components/LiveClock";
+import AppMark from "@/components/AppMark";
 import { InfoSlideshow } from "@/components/InfoSlideshow";
 import { CounterGrid } from "@/components/CounterGrid";
 import { useRealtimeQueue } from "@/hooks/useRealtimeQueue";
@@ -60,13 +61,11 @@ function DisplayPage() {
   );
 
   return (
-    <div className="min-h-screen bg-hero text-foreground p-4 md:p-8 flex flex-col">
+    <div className="min-h-screen bg-display-hero text-foreground p-4 md:p-8 flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="grid h-14 w-14 md:h-16 md:w-16 place-items-center rounded-2xl bg-gradient-to-br from-gold to-gold-glow text-navy-deep font-black text-2xl shadow-glow">
-            AD
-          </div>
+          <div className="flex items-center gap-4">
+          <AppMark className="h-14 w-14 md:h-16 md:w-16 text-2xl" />
           <div>
             <div className="font-display text-2xl md:text-3xl font-extrabold leading-tight">
               KECAMATAN GAYAMSARI
@@ -98,14 +97,14 @@ function DisplayPage() {
                 <div
                   key={activeCalled.id}
                   className="font-display tabular-nums font-black leading-none text-gold-gradient animate-ticker-pop"
-                  style={{ fontSize: "clamp(8rem, 22vw, 22rem)" }}
+                  style={{ fontSize: "clamp(4.5rem, 14vw, 11rem)" }}
                 >
                   {activeCalled.ticket_number}
                 </div>
                 <div className="mt-4 text-2xl md:text-4xl text-muted-foreground">
                   silakan menuju
                 </div>
-                <div className="mt-2 font-display text-4xl md:text-7xl font-extrabold">
+                <div className="mt-2 font-display text-3xl md:text-5xl font-extrabold">
                   {activeCounter?.name ?? "—"}
                 </div>
               </>
@@ -113,7 +112,7 @@ function DisplayPage() {
               <div className="text-center">
                 <div
                   className="font-display font-black leading-none text-foreground/20"
-                  style={{ fontSize: "clamp(6rem, 16vw, 16rem)" }}
+                  style={{ fontSize: "clamp(3.5rem, 11vw, 9rem)" }}
                 >
                   —
                 </div>

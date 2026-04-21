@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import AppMark from "@/components/AppMark";
 import { useMemo, useState } from "react";
 import { useRealtimeQueue } from "@/hooks/useRealtimeQueue";
 import { callNext, recall, resetDaily, skip } from "@/lib/queue";
@@ -78,11 +79,8 @@ function AdminPage() {
     <div className="min-h-screen bg-hero">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
         <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-gold to-gold-glow text-navy-deep font-black shadow-glow"
-          >
-            AD
+          <Link to="/">
+            <AppMark className="h-11 w-11 text-lg" />
           </Link>
           <div>
             <div className="font-display text-lg font-bold">Dashboard Petugas</div>

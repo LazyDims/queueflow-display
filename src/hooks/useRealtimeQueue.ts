@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchCategories,
@@ -16,16 +16,25 @@ export function useRealtimeQueue() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [lastEvent, setLastEvent] = useState<CallEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const mountedRef = useRef(true);
+
+  const refetchAll = async () => {
+    const [l, t] = await Promise.all([fetchCounters(), fetchTodayTickets()]);
+    if (!mountedRef.current) return;
+    setCounters(l);
+    setTickets(t);
+  };
 
   useEffect(() => {
-    let mounted = true;
+    mountedRef.current = true;
+
     (async () => {
       const [c, l, t] = await Promise.all([
         fetchCategories(),
         fetchCounters(),
         fetchTodayTickets(),
       ]);
-      if (!mounted) return;
+      if (!mountedRef.current) return;
       setCategories(c);
       setCounters(l);
       setTickets(t);
@@ -39,7 +48,7 @@ export function useRealtimeQueue() {
         { event: "*", schema: "public", table: "tickets" },
         async () => {
           const t = await fetchTodayTickets();
-          setTickets(t);
+          if (mountedRef.current) setTickets(t);
         }
       )
       .on(
@@ -47,22 +56,44 @@ export function useRealtimeQueue() {
         { event: "*", schema: "public", table: "counters" },
         async () => {
           const l = await fetchCounters();
-          setCounters(l);
+          if (mountedRef.current) setCounters(l);
         }
       )
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "call_events" },
         (payload) => {
-          setLastEvent(payload.new as CallEvent);
+          if (mountedRef.current) setLastEvent(payload.new as CallEvent);
         }
       )
+      .subscribe(async (status) => {
+        // Setelah channel berhasil subscribe, refetch untuk catch-up
+        // data yang mungkin berubah saat sedang connecting
+        if (status === "SUBSCRIBED" && mountedRef.current) {
+          const [l, t] = await Promise.all([fetchCounters(), fetchTodayTickets()]);
+          if (mountedRef.current) {
+            setCounters(l);
+            setTickets(t);
+          }
+        }
+      });
+
+    // Channel khusus untuk sinyal sistem (reset)
+    const systemChannel = supabase
+      .channel("queue-system-events")
+      .on("broadcast", { event: "queue_reset" }, async () => {
+        if (!mountedRef.current) return;
+        await refetchAll();
+        if (mountedRef.current) setLastEvent(null);
+      })
       .subscribe();
 
     return () => {
-      mounted = false;
+      mountedRef.current = false;
       supabase.removeChannel(channel);
+      supabase.removeChannel(systemChannel);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { categories, counters, tickets, lastEvent, loading };
