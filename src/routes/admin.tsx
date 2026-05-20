@@ -107,7 +107,7 @@ function AdminPage() {
                   onClick={() => setCounterId(c.id)}
                   className={`rounded-xl px-4 py-4 font-display font-bold text-xl transition-all ${
                     active
-                      ? "bg-gradient-to-br from-gold to-gold-glow text-navy-deep shadow-glow"
+                      ? "bg-linear-to-br from-gold to-gold-glow text-navy-deep shadow-glow"
                       : "bg-card-gradient ring-gold text-foreground hover:-translate-y-0.5"
                   }`}
                 >
@@ -132,7 +132,7 @@ function AdminPage() {
                 <button
                   onClick={onCall}
                   disabled={busy}
-                  className="rounded-xl bg-gradient-to-br from-gold to-gold-glow px-6 py-3 font-display text-base font-bold text-navy-deep shadow-glow disabled:opacity-50 hover:-translate-y-0.5 transition"
+                  className="rounded-xl bg-linear-to-br from-gold to-gold-glow px-6 py-3 font-display text-base font-bold text-navy-deep shadow-glow disabled:opacity-50 hover:-translate-y-0.5 transition"
                 >
                   Panggil Berikutnya →
                 </button>

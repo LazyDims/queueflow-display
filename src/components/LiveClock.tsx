@@ -9,25 +9,47 @@ const MONTHS = [
 ];
 
 export function LiveClock({ className = "" }: { className?: string }) {
-  const [now, setNow] = useState<Date>(() => new Date());
+  const [mounted, setMounted] = useState(false);
+  const [now, setNow] = useState<Date | null>(null);
+
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
+    setMounted(true);
+
+    const updateTime = () => {
+      setNow(new Date());
+    };
+
+    updateTime();
+
+    const id = setInterval(updateTime, 1000);
+
     return () => clearInterval(id);
   }, []);
+
+  if (!mounted || !now) {
+    return null;
+  }
 
   const hh = String(now.getHours()).padStart(2, "0");
   const mm = String(now.getMinutes()).padStart(2, "0");
   const ss = String(now.getSeconds()).padStart(2, "0");
-  const dateStr = `${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+  const dateStr = `${DAYS[now.getDay()]}, ${now.getDate()} ${
+    MONTHS[now.getMonth()]
+  } ${now.getFullYear()}`;
 
   return (
     <div className={`flex flex-col items-end ${className}`}>
       <div className="font-display tabular-nums text-3xl md:text-5xl font-bold tracking-tight text-gold-gradient">
-        {hh} :
-        <span className="animate-blink-soft">:</span>
+        {hh}
+        <span className="animate-blink-soft"> : </span>
         {mm}
-        <span className="text-foreground/60 text-2xl md:text-3xl"> : {ss}</span>
+        <span className="text-foreground/60 text-2xl md:text-3xl">
+          {" "}
+          : {ss}
+        </span>
       </div>
+
       <div className="text-xs md:text-base text-muted-foreground tracking-wide uppercase">
         {dateStr}
       </div>

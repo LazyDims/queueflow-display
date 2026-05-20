@@ -41,32 +41,62 @@ export type CallEvent = {
 };
 
 export async function fetchCategories(): Promise<Category[]> {
-  const { data, error } = await supabase
-    .from("queue_categories")
-    .select("*")
-    .order("sort_order");
-  if (error) throw error;
-  return (data ?? []) as Category[];
+  try {
+    const { data, error } = await supabase
+      .from("queue_categories")
+      .select("*")
+      .order("sort_order");
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.warn('fetchCategories error', error);
+      return [];
+    }
+    return (data ?? []) as Category[];
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('fetchCategories failed', e);
+    return [];
+  }
 }
 
 export async function fetchCounters(): Promise<Counter[]> {
-  const { data, error } = await supabase
-    .from("counters")
-    .select("*")
-    .order("number");
-  if (error) throw error;
-  return (data ?? []) as Counter[];
+  try {
+    const { data, error } = await supabase
+      .from("counters")
+      .select("*")
+      .order("number");
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.warn('fetchCounters error', error);
+      return [];
+    }
+    return (data ?? []) as Counter[];
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('fetchCounters failed', e);
+    return [];
+  }
 }
 
 export async function fetchTodayTickets(): Promise<Ticket[]> {
-  const today = new Date().toISOString().slice(0, 10);
-  const { data, error } = await supabase
-    .from("tickets")
-    .select("*")
-    .eq("issue_date", today)
-    .order("issued_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as Ticket[];
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data, error } = await supabase
+      .from("tickets")
+      .select("*")
+      .eq("issue_date", today)
+      .order("issued_at", { ascending: false });
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.warn('fetchTodayTickets error', error);
+      return [];
+    }
+    return (data ?? []) as Ticket[];
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('fetchTodayTickets failed', e);
+    return [];
+  }
 }
 
 export async function issueTicket(categoryCode: string): Promise<Ticket> {

@@ -15,6 +15,7 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+src/assets/SELAYANG_PANDANG_2026_FIX.mp4
 
 # Wrangler / Cloudflare
 .wrangler/

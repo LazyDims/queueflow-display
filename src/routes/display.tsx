@@ -81,7 +81,7 @@ function DisplayPage() {
       {/* Hero: active number + slideshow */}
       <section className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 flex-1 min-h-0">
         {/* LEFT — Active queue */}
-        <div className="lg:col-span-3 rounded-3xl bg-card-gradient ring-gold p-6 md:p-10 shadow-card-elev flex flex-col">
+        <div className="lg:col-span-2 rounded-3xl bg-card-gradient ring-gold p-6 md:p-10 shadow-card-elev flex flex-col">
           <div className="flex items-center justify-between">
             <div className="text-sm md:text-base uppercase tracking-[0.3em] text-muted-foreground">
               Nomor Antrian
@@ -147,7 +147,7 @@ function DisplayPage() {
         </div>
 
         {/* RIGHT — Info slideshow */}
-        <div className="lg:col-span-2 min-h-[280px] lg:min-h-0">
+        <div className="lg:col-span-3 min-h-70 lg:min-h-0 " >
           <InfoSlideshow />
         </div>
       </section>

@@ -8,10 +8,42 @@ function createSupabaseClient() {
   const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error(
-      'Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY (or VITE_ prefixed versions) are set in your .env file.'
-    );
+  const missing = !SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY;
+
+  if (missing) {
+    // Provide a lightweight no-op fallback client so the app doesn't crash
+    // when environment variables are not present (useful for local dev without .env).
+    // The fallback implements the minimal methods used by the app and returns
+    // empty results or no-op channels. Consumers should still handle empty data.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const noop = (..._args: any[]) => Promise.resolve({ data: null, error: null });
+
+    const fallbackChannel = (name?: string, opts?: any) => {
+      const ch: any = {
+        on() { return ch; },
+        subscribe(cb?: (status: string) => void) {
+          // Immediately notify subscribed as if connected
+          if (typeof cb === 'function') cb('SUBSCRIBED');
+          return ch;
+        },
+        send: async () => ({}),
+      };
+      return ch;
+    };
+
+    const fallbackClient: any = {
+      from: () => ({ select: async () => ({ data: [], error: null }), order: async () => ({ data: [], error: null }), eq: async () => ({ data: [], error: null }) }),
+      rpc: noop,
+      channel: fallbackChannel,
+      removeChannel: () => {},
+      auth: { onAuthStateChange: () => {}, signIn: noop, signOut: noop },
+    };
+
+    // warn once
+    // eslint-disable-next-line no-console
+    console.warn('Supabase env not set: falling back to noop supabase client. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable live features.');
+
+    return fallbackClient as ReturnType<typeof createSupabaseClient>;
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {

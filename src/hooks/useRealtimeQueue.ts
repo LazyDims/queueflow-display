@@ -41,8 +41,13 @@ export function useRealtimeQueue() {
       setLoading(false);
     })();
 
+    // Use a unique channel name per hook instance to avoid re-using a
+    // previously-subscribed channel (HMR or multi-mount cases can cause
+    // "cannot add ... after subscribe" errors). The real-time topic (table
+    // filters) still match regardless of channel name.
+    const channelName = `queue-realtime-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel("queue-realtime")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "tickets" },
@@ -62,11 +67,11 @@ export function useRealtimeQueue() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "call_events" },
-        (payload) => {
+        (payload: { new: CallEvent; }) => {
           if (mountedRef.current) setLastEvent(payload.new as CallEvent);
         }
       )
-      .subscribe(async (status) => {
+      .subscribe(async (status: string) => {
         // Setelah channel berhasil subscribe, refetch untuk catch-up
         // data yang mungkin berubah saat sedang connecting
         if (status === "SUBSCRIBED" && mountedRef.current) {
