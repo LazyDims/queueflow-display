@@ -12,8 +12,6 @@ type Slide = {
   subtitle: string;
 };
 
-// Example slides: currently use images as posters. To use videos,
-// add `videoSrc: '/assets/info-1.mp4'` (or import the mp4) for a slide.
 const SLIDES: Slide[] = [
   {
     src: selayang_pandang,
