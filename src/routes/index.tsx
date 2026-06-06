@@ -113,7 +113,7 @@ function NavCard({
       to={to}
       className={`group rounded-2xl px-5 py-4 transition-all hover:-translate-y-0.5 ${
         accent
-          ? "bg-gradient-to-br from-gold to-gold-glow text-navy-deep shadow-glow"
+          ? "bg-linear-to-br from-gold to-gold-glow text-navy-deep shadow-glow"
           : "bg-card-gradient ring-gold text-foreground"
       }`}
     >
